@@ -1,17 +1,19 @@
 package com.algaworks.algashop.billing.application.invoice.management;
 
+import com.algaworks.algashop.billing.domain.model.creditcard.CreditCardNotFoundException;
 import com.algaworks.algashop.billing.domain.model.creditcard.CreditCardRepository;
 import com.algaworks.algashop.billing.domain.model.invoice.*;
 import com.algaworks.algashop.billing.domain.model.invoice.payment.Payment;
 import com.algaworks.algashop.billing.domain.model.invoice.payment.PaymentGatewayService;
 import com.algaworks.algashop.billing.domain.model.invoice.payment.PaymentRequest;
+import com.algaworks.algashop.billing.domain.model.invoice.payment.PaymentStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -28,7 +30,7 @@ public class InvoiceManagementApplicationService {
     @Transactional
     public UUID generate(GenerateInvoiceInput input) {
         var paymentSettings = input.getPaymentSettings();
-        verifyCreditCardId(input.getPaymentSettings().getCreditCardId(), input.getCustomerId());
+        verifyCreditCardId(input);
 
         var payer = convertToPayer(input.getPayer());
         Set<LineItem> items = convertToLineItems(input.getItems());
@@ -61,7 +63,14 @@ public class InvoiceManagementApplicationService {
         invoiceRepository.saveAndFlush(invoice);
     }
 
-    private Set<LineItem> convertToLineItems(Set<LineItemInput> itemsInput) {  
+    @Transactional
+    public void updatePaymentStatus(UUID invoiceId, PaymentStatus paymentStatus) {
+        Invoice invoice = invoiceRepository.findById(invoiceId).orElseThrow(InvoiceNotFoundException::new);
+        invoice.updatePaymentStatus(paymentStatus);
+        invoiceRepository.saveAndFlush(invoice);
+    }
+
+    private Set<LineItem> convertToLineItems(List<LineItemInput> itemsInput) {
         Set<LineItem> lineItems = new LinkedHashSet<>();
         int itemNumber = 1;
         for (LineItemInput itemInput : itemsInput) {
@@ -73,6 +82,16 @@ public class InvoiceManagementApplicationService {
             itemNumber++;
         }
         return lineItems;
+    }
+
+    private void verifyCreditCardId(GenerateInvoiceInput input) {
+        if (PaymentMethod.CREDIT_CARD.equals(input.getPaymentSettings().getMethod())) {
+            UUID creditCardId = input.getPaymentSettings().getCreditCardId();
+            UUID customerId = input.getCustomerId();
+            if (!creditCardRepository.existsByIdAndCustomerId(creditCardId, customerId)) {
+                CreditCardNotFoundException.beacuse(String.format("Credit card %s not found exception", creditCardId));
+            }
+        }
     }
 
     private Payer convertToPayer(PayerData payerData) {
@@ -92,12 +111,6 @@ public class InvoiceManagementApplicationService {
                         .number(addressData.getNumber())
                         .build())
                 .build();
-    }
-
-    private void verifyCreditCardId(UUID creditCardId, @NonNull UUID customerId) {
-        if (creditCardId != null && !creditCardRepository.existsByIdAndCustomerId(creditCardId, customerId)) {
-            throw new CreditCardNotFoundException();
-        }
     }
 
     private PaymentRequest toPaymentRequest(Invoice invoice) {
