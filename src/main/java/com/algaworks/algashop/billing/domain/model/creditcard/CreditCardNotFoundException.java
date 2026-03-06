@@ -1,22 +1,19 @@
 package com.algaworks.algashop.billing.domain.model.creditcard;
 
 
-import com.algaworks.algashop.billing.domain.model.exception.DomainException;
+import com.algaworks.algashop.billing.domain.model.exception.DomainEntityNotFoundException;
 
-public class CreditCardNotFoundException extends DomainException {
-
-    private CreditCardNotFoundException() {
-    }
+public class CreditCardNotFoundException extends DomainEntityNotFoundException {
 
     private CreditCardNotFoundException(String message) {
         super(message);
     }
 
-    public static CreditCardNotFoundException of() {
-        throw new CreditCardNotFoundException();
+    public static CreditCardNotFoundException notFound() {
+        throw new CreditCardNotFoundException("Cartão de crédito não encontrado");
     }
 
-    public static void beacuse(String message) {
+    public static void throwNotFound(String message) {
         throw new CreditCardNotFoundException(message);
     }
 

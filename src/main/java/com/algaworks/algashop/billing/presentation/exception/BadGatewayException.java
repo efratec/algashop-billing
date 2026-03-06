@@ -11,7 +11,7 @@ public class BadGatewayException extends DomainException {
         super(message, cause);
     }
 
-    public static BadGatewayException beacuse(String message, Throwable cause) {
+    public static void throwBadGateway(String message, Throwable cause) {
         throw new BadGatewayException(message, cause);
     }
 
