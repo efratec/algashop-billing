@@ -61,7 +61,6 @@ dependencies {
     mockitoAgent('org.mockito:mockito-core:5.18.0') {
         transitive = false
     }
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 tasks.named('test') {
@@ -99,4 +98,17 @@ tasks.register('integrationTest', Test) {
         includeTestsMatching "*IT"
         excludeTestsMatching "*Test"
     }
+}
+
+bootJar {
+    archiveFileName = 'billing.jar'
+}
+
+tasks.register('dockerBuild', Exec) {
+    description = 'Builds a multi-platform Docker image using Buildx'
+    group = 'build'
+    dependsOn('bootJar')
+    workingDir project.rootDir
+    commandLine 'docker', 'buildx', 'build', '--platform', 'linux/arm64/v8,linux/amd64',
+            '--tag', 'algashop/billing:dev', '.'
 }

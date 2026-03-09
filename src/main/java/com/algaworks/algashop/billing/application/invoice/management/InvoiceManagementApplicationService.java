@@ -89,7 +89,7 @@ public class InvoiceManagementApplicationService {
             UUID creditCardId = input.getPaymentSettings().getCreditCardId();
             UUID customerId = input.getCustomerId();
             if (!creditCardRepository.existsByIdAndCustomerId(creditCardId, customerId)) {
-                CreditCardNotFoundException.throwNotFound(String.format("Credit card %s not found exception", creditCardId));
+                throw CreditCardNotFoundException.notFound(String.format("Credit card %s not found exception", creditCardId));
             }
         }
     }

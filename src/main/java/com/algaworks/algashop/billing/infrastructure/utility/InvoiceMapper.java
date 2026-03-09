@@ -5,9 +5,7 @@ import com.algaworks.algashop.billing.domain.model.invoice.Invoice;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring",
-        uses = {InvoiceMapper.class},
-        unmappedTargetPolicy = ReportingPolicy.ERROR)
+@Mapper(componentModel = "spring")
 public interface InvoiceMapper {
 
     InvoiceOutput  toInvoiceOutput(Invoice invoice);

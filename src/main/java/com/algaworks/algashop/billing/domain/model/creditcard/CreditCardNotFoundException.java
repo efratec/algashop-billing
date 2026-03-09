@@ -10,11 +10,11 @@ public class CreditCardNotFoundException extends DomainEntityNotFoundException {
     }
 
     public static CreditCardNotFoundException notFound() {
-        throw new CreditCardNotFoundException("Cartão de crédito não encontrado");
+        return new CreditCardNotFoundException("Cartão de crédito não encontrado");
     }
 
-    public static void throwNotFound(String message) {
-        throw new CreditCardNotFoundException(message);
+    public static CreditCardNotFoundException notFound(String message) {
+        return new CreditCardNotFoundException(message);
     }
 
 }
