@@ -1,4 +1,4 @@
-package com.algaworks.algashop.billing.infrastructure.fastpay;
+package com.algaworks.algashop.billing.infrastructure.creditcard.fastpay;
 
 import com.algaworks.algashop.billing.domain.model.creditcard.CreditCard;
 import com.algaworks.algashop.billing.domain.model.creditcard.CreditCardRepository;
@@ -9,6 +9,7 @@ import com.algaworks.algashop.billing.domain.model.invoice.payment.Payment;
 import com.algaworks.algashop.billing.domain.model.invoice.payment.PaymentRequest;
 import com.algaworks.algashop.billing.infrastructure.AbstractFastpayIT;
 import com.algaworks.algashop.billing.infrastructure.payment.fastpay.PaymentGatewayServiceFastpayImpl;
+import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,13 +23,11 @@ import java.util.UUID;
 
 @SpringBootTest
 @Transactional
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 class PaymentGatewayServiceFastpayImplIT extends AbstractFastpayIT {
 
-    @Autowired
-    private PaymentGatewayServiceFastpayImpl paymentGatewayServiceFastpay;
-
-    @Autowired
-    private CreditCardRepository creditCardRepository;
+    private final PaymentGatewayServiceFastpayImpl paymentGatewayServiceFastpay;
+    private final CreditCardRepository creditCardRepository;
 
     @BeforeAll
     public static void beforeAll() {

@@ -2,10 +2,11 @@ package com.algaworks.algashop.billing.infrastructure;
 
 import com.algaworks.algashop.billing.domain.model.creditcard.LimitedCreditCard;
 import com.algaworks.algashop.billing.infrastructure.creditcard.fastpay.CreditCardProviderServiceFastpayImpl;
-import com.algaworks.algashop.billing.infrastructure.fastpay.FastpayCreditCardTokenizationAPIClient;
-import com.algaworks.algashop.billing.infrastructure.fastpay.FastpayCreditCardTokenizationAPIClientConfig;
-import com.algaworks.algashop.billing.infrastructure.fastpay.FastpayTokenizationInput;
-import com.algaworks.algashop.billing.infrastructure.fastpay.FastpayTokenizedCreditCardModel;
+import com.algaworks.algashop.billing.infrastructure.creditcard.fastpay.FastpayCreditCardTokenizationAPIClient;
+import com.algaworks.algashop.billing.infrastructure.creditcard.fastpay.FastpayCreditCardTokenizationAPIClientConfig;
+import com.algaworks.algashop.billing.infrastructure.creditcard.fastpay.FastpayTokenizationInput;
+import com.algaworks.algashop.billing.infrastructure.creditcard.fastpay.FastpayTokenizedCreditCardModel;
+import com.algaworks.algashop.billing.util.TestContainerPostgreSQLConfig;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.common.ClasspathFileSource;
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
@@ -19,7 +20,7 @@ import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
-@Import(FastpayCreditCardTokenizationAPIClientConfig.class)
+@Import({FastpayCreditCardTokenizationAPIClientConfig.class, TestContainerPostgreSQLConfig.class})
 public abstract class AbstractFastpayIT {
 
     @Autowired

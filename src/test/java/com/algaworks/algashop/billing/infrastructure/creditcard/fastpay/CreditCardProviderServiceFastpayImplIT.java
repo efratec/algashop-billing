@@ -1,4 +1,4 @@
-package com.algaworks.algashop.billing.infrastructure.fastpay;
+package com.algaworks.algashop.billing.infrastructure.creditcard.fastpay;
 
 import com.algaworks.algashop.billing.domain.model.creditcard.LimitedCreditCard;
 import com.algaworks.algashop.billing.infrastructure.AbstractFastpayIT;

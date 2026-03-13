@@ -1,4 +1,4 @@
-package com.algaworks.algashop.billing.infrastructure.fastpay;
+package com.algaworks.algashop.billing.infrastructure.creditcard.fastpay;
 
 import com.algaworks.algashop.billing.infrastructure.payment.AlgaShopPaymentProperties;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,4 +1,4 @@
-package com.algaworks.algashop.billing.infrastructure.fastpay;
+package com.algaworks.algashop.billing.infrastructure.creditcard.fastpay;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
