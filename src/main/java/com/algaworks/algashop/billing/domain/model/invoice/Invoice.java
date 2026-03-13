@@ -108,6 +108,7 @@ public class Invoice extends AbstractAuditableAggregateRoot<Invoice> {
         }
         setPaidAt(OffsetDateTime.now());
         setStatus(InvoiceStatus.PAID);
+        setExpiresAt(null);
         registerEvent(InvoicePaidEvent.of(this.getId(), this.getCustomerId(), this.getOrderId(), this.getPaidAt()));
     }
 
@@ -118,6 +119,7 @@ public class Invoice extends AbstractAuditableAggregateRoot<Invoice> {
         setCancelReason(cancelReason);
         setCanceledAt(OffsetDateTime.now());
         setStatus(InvoiceStatus.CANCELED);
+        setExpiresAt(null);
         registerEvent(InvoiceCanceledEvent.of(this.getId(), this.getCustomerId(), this.getOrderId(), this.getCanceledAt()));
     }
 
