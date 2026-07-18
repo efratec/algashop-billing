@@ -1,8 +1,15 @@
+buildscript {
+    dependencies {
+        classpath 'org.flywaydb:flyway-core:12.3.0'
+        classpath 'org.flywaydb:flyway-database-postgresql:12.3.0'
+    }
+}
+
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.7'
+	id 'org.springframework.boot' version '4.0.3'
 	id 'io.spring.dependency-management' version '1.1.7'
-    id "org.flywaydb.flyway" version "12.0.0"
+    id "org.flywaydb.flyway" version "12.3.0"
 }
 
 group = 'com.algaworks.algashop'
@@ -11,7 +18,7 @@ description = 'Billing Microservice'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(25)
 	}
 }
 
@@ -28,11 +35,15 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-restclient'
+
     implementation 'commons-validator:commons-validator:1.10.1'
     implementation 'com.fasterxml.uuid:java-uuid-generator:5.1.0'
     implementation 'io.hypersistence:hypersistence-tsid:2.1.4'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
     implementation 'org.apache.commons:commons-lang3:3.20.0'
 
     runtimeOnly 'org.postgresql:postgresql'
@@ -41,16 +52,24 @@ dependencies {
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-restclient-test'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-flyway-test'
+    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+    testImplementation 'org.testcontainers:testcontainers-junit-jupiter'
+    testImplementation 'org.testcontainers:testcontainers-postgresql'
+
 
     testImplementation 'org.wiremock:wiremock-standalone:3.13.1'
 
     testCompileOnly("org.projectlombok:lombok")
     testAnnotationProcessor("org.projectlombok:lombok")
 
-    testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-    testImplementation 'org.testcontainers:junit-jupiter'
-    testImplementation 'org.testcontainers:postgresql'
+
 
     runtimeOnly 'com.h2database:h2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
