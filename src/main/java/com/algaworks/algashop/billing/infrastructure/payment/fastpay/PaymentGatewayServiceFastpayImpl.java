@@ -6,10 +6,12 @@ import com.algaworks.algashop.billing.domain.model.creditcard.CreditCardReposito
 import com.algaworks.algashop.billing.domain.model.invoice.payment.Payment;
 import com.algaworks.algashop.billing.domain.model.invoice.payment.PaymentGatewayService;
 import com.algaworks.algashop.billing.domain.model.invoice.payment.PaymentRequest;
+import com.algaworks.algashop.billing.infrastructure.payment.AlgaShopPaymentProperties;
 import com.algaworks.algashop.billing.presentation.exception.BadGatewayException;
 import com.algaworks.algashop.billing.presentation.exception.GatewayTimeoutException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.resilience.annotation.ConcurrencyLimit;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
@@ -21,28 +23,23 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PaymentGatewayServiceFastpayImpl implements PaymentGatewayService {
 
-    private final FastpayPaymentAPIClient fastpayPaymentAPIClient;
+    private final ResilientFastpayPaymentAPIClient fastpayPaymentAPIClient;
     private final CreditCardRepository creditCardRepository;
 
+    private final AlgaShopPaymentProperties algaShopPaymentProperties;
+
     @Override
+    @ConcurrencyLimit(10)
     public Payment capture(PaymentRequest request) {
         FastpayPaymentInput input = convertToInput(request);
-        FastpayPaymentModel response = null;
-
-        try {
-            response = fastpayPaymentAPIClient.capture(input);
-        } catch (ResourceAccessException e) {
-            GatewayTimeoutException.throwGatewayTimeout("Fastpay API Timeout", e);
-        } catch (HttpClientErrorException e) {
-            BadGatewayException.throwBadGateway("Fastpay API Bad Gateway", e);
-        }
-
+        FastpayPaymentModel response = fastpayPaymentAPIClient.capture(input);
         return convertToPayment(response);
     }
 
     @Override
     public Payment findByCode(String gatewayCode) {
-        return null;
+        FastpayPaymentModel response = fastpayPaymentAPIClient.findById(gatewayCode);
+        return convertToPayment(response);
     }
 
     private FastpayPaymentInput convertToInput(PaymentRequest request) {
@@ -58,7 +55,7 @@ public class PaymentGatewayServiceFastpayImpl implements PaymentGatewayService {
                 .zipCode(address.getZipCode())
                 .addressLine1(address.getStreet() + ", " + address.getNumber())
                 .addressLine2(address.getComplement())
-                .replyToUrl("http://example.com/webhook");
+                .replyToUrl(algaShopPaymentProperties.getFastpay().getWebhookUrl());
 
         switch (request.getMethod()) {
             case CREDIT_CARD -> {
